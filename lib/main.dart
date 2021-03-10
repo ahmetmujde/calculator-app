@@ -1,3 +1,4 @@
+import 'package:eval_ex/expression.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +14,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   var number_str = "0";
-  var number_result=0;
+  var number_list =  new List();
 
   void numbers_function(var number) {
     setState(() {
@@ -32,7 +33,7 @@ class _MyAppState extends State<MyApp> {
   void math_operators_function(var operators){
     setState(() {
 
-      var operator_list = [".","x","+","-","/"];
+      var operator_list = [".","*","+","-","/"];
       bool operator=false;
       for(var i=0; i<operator_list.length; i++){
         if(number_str.substring(number_str.length-1)==operator_list[i]){
@@ -64,34 +65,29 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  void equal_function() {
+  void mod_function() {
     setState(() {
-      var operator_list = ["x","+","-","/"];
-      var numbers_list = new List();
-      var numbers_operator_list = new List();
-      var count=0;
-      for(var i=0; i<number_str.length; i++){
-        for(var j=0; j<operator_list.length; j++){
-          if(number_str[i]==operator_list[j]){
-            numbers_list.add(number_str.substring(count,i));
-            numbers_operator_list.add(number_str.substring(i,i+1));
-            count=i+1;
-          }
-        }
-
-        if(number_str.length-1==i){
-          numbers_list.add(number_str.substring(count,i+1));
-        }
+      if(number_str.indexOf('%',0)<0){
+        number_str=number_str+"%";
       }
-
-      for(var i=0; i<numbers_list.length; i++){
-        for(var j=0; j<numbers_operator_list.length; j++){
-
-        }
-      }
-
     });
   }
+
+  void equal_function() {
+    setState(() {
+        var operator_list = [".","*","+","-","/","%"];
+
+        for(var i=0; i<operator_list.length; i++){
+          if(number_str.substring(number_str.length-1,number_str.length)==operator_list[i])
+            number_str=number_str.substring(0,number_str.length-1);
+          print(number_str);
+        }
+        Expression exp = Expression(number_str);
+        number_str=exp.eval().toString();
+    });
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +108,7 @@ class _MyAppState extends State<MyApp> {
                   alignment: Alignment.bottomRight,
                   child: Container(
                     child: Text(number_str,
-                        style: TextStyle(fontSize: 60, color: Colors.black)),
+                        style: TextStyle(fontSize: 50, color: Colors.black)),
                   ),
                 ),
                 width: double.infinity,
@@ -149,6 +145,7 @@ class _MyAppState extends State<MyApp> {
                     ),
                     //mod
                     RaisedButton(
+                      onPressed: mod_function,
                       child: const Text('%', style: TextStyle(fontSize: 21)),
                       color: Color(0xFF509406),
                       padding: EdgeInsets.all(22.0),
@@ -214,29 +211,14 @@ class _MyAppState extends State<MyApp> {
                     //multiplied
                     RaisedButton(
                       onPressed: () {
-                        math_operators_function("x");
+                        math_operators_function("*");
                       },
-                      child: const Text('x', style: TextStyle(fontSize: 21)),
+                      child: const Text('x', style: TextStyle(fontSize: 20)),
                       color: Color(0xFF509406),
                       padding: EdgeInsets.all(22.0),
                       shape: CircleBorder(),
                       splashColor: Color(0xFF89E02B),
                     ),
-                    /*
-                    *
-                    Ink(
-                      decoration: const ShapeDecoration(
-                        color: Color(0xFF1F3670),
-                        shape: CircleBorder(),
-                      ),
-                      padding: EdgeInsets.all(20.0),
-                      child: IconButton(
-                        icon: Icon(Icons.add,size: 20,),
-                        color: Colors.white,
-                        splashColor: Color(0xFF355BBD),
-                        onPressed: () {},
-                      ),
-                    ),*/
                   ],
                 ),
               ),
